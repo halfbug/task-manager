@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
-import TaskForm from './TaskForm';
-import TaskList from './TaskList';
+import React, { useEffect, useState } from 'react';
+import TaskForm from './components/TaskForm';
+import TaskList from './components/TaskList';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AuthProvider, useAuth } from './auth.context';
+import LoginPage from './login';
+import axios from 'axios';
+import { taskAPI } from './api/task';
 
 export interface Task {
   id: number;
@@ -17,7 +21,23 @@ export type TaskInput= Omit<Task,'id' | 'status'>
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   console.log("🚀 ~ file: App.tsx:17 ~ tasks:", tasks)
-  const [userGroup, setUserGroup] = useState<string>('admin'); // For simplicity, we assume there's only one group.
+  const { isLoggedIn, userGroup } = useAuth();
+  // const [userGroup, setUserGroup] = useState<string>('admin'); 
+  useEffect(() => {
+    // Fetch tasks for the current user's group from the mock API
+    taskAPI
+      .get('/api/tasks', { params: { group: userGroup } })
+      .then((response) => {
+        setTasks(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching tasks:', error);
+      });
+  }, [userGroup]);
+
+  if (!isLoggedIn) {
+    return <LoginPage />;
+  }
 
   const addTask = (task: TaskInput)  => {
     setTasks([...tasks, { ...task, id: Date.now(), status: 'incomplete' }]);
@@ -56,16 +76,18 @@ const App: React.FC = () => {
     setTasks(reorderedTasks);
   };
 
+
   return (
     <div className='main'>
       <h1>Task Management System</h1>
       <TaskForm addTask={addTask} />
       <h2>Tasks</h2>
-      <select value={userGroup} onChange={(e) => setUserGroup(e.target.value)}>
+      <p>{userGroup}</p>
+      {/* <select value={userGroup} onChange={(e) => setUserGroup(e.target.value)}>
         <option value="admin">Admin</option>
         <option value="editor">Editor</option>
         <option value="author">Author</option>
-      </select>
+      </select> */}
       <TaskList
         tasks={filteredTasks}
         onComplete={(task) => updateTaskStatus(task.id, 'completed')}
@@ -77,4 +99,10 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+const AppWithAuthProvider: React.FC = () => (
+  <AuthProvider>
+    <App />
+  </AuthProvider>
+);
+
+export default AppWithAuthProvider;

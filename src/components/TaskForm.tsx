@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Task, TaskInput } from './App';
+import { Task, TaskInput } from '../App';
+import { useAuth } from '../auth.context';
 
 interface TaskFormProps {
   addTask: (task: TaskInput) => void;
@@ -8,8 +9,8 @@ interface TaskFormProps {
 const TaskForm: React.FC<TaskFormProps> = ({ addTask }) => {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [userGroup, setUserGroup] = useState<string>('admin');
-
+  const { userGroup: loggedInUserGroup } = useAuth();
+  const [userGroup, setUserGroup] = useState<string>(loggedInUserGroup);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !description.trim()) return;
@@ -20,7 +21,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ addTask }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-        <select value={userGroup} onChange={(e) => setUserGroup(e.target.value)}>
+        <select value={loggedInUserGroup} onChange={(e) => setUserGroup(e.target.value)} disabled>
         <option value="admin">Admin</option>
         <option value="editor">Editor</option>
         <option value="author">Author</option>

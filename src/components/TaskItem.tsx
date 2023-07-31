@@ -1,5 +1,5 @@
 import React from 'react';
-import { Task } from './App';
+import { Task } from '../App';
 
 interface TaskItemProps {
   task: Task;
