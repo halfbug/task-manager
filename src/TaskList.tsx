@@ -17,16 +17,16 @@ const getItemStyle = (isDragging: any, draggableStyle: any) => ({
     margin: `0 0 ${grid}px 0`,
   
     // change background colour if dragging
-    background: isDragging ? "lightgreen" : "grey",
+    background: isDragging ? "lightgreen" : "transparent",
   
     // styles we need to apply on draggables
     ...draggableStyle
   });
   
   const getListStyle = (isDraggingOver:any) => ({
-    background: isDraggingOver ? "lightblue" : "lightgrey",
+    background: isDraggingOver ? "lightblue" : "transparent",
     padding: grid,
-    width: 250
+    // width: 250
   });
   
 const TaskList: React.FC<TaskListProps> = ({ tasks, onComplete, onDelete, onDragEnd }) => {
@@ -34,7 +34,9 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onComplete, onDelete, onDrag
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable"> 
           {(provided, snapshot) => (
-              <div {...provided.droppableProps} ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+              <div {...provided.droppableProps} ref={provided.innerRef} 
+              style={getListStyle(snapshot.isDraggingOver)}
+              >
                   
                 {tasks.map((task, index) => (
                     <Draggable key={task.id} draggableId={task.id.toString()} index={index}>
@@ -52,6 +54,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onComplete, onDelete, onDrag
                           task={task}
                           onComplete={onComplete}
                           onDelete={onDelete}
+                          className={task.status === 'completed' ? 'task-item completed' : 'task-item'}
                         />
                       </div>
                     )}

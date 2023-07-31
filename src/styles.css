@@ -79,4 +79,20 @@ body {
   .main {
     padding: 5px;
   }
+  .task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: opacity 0.3s ease;
+  }
   
+  .task-item {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .task-item.completed {
+    background-color: #c5e1a5;
+  }
