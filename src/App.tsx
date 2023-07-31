@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import TaskForm from './TaskForm';
 import TaskList from './TaskList';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export interface Task {
   id: number;
@@ -19,6 +21,7 @@ const App: React.FC = () => {
 
   const addTask = (task: TaskInput)  => {
     setTasks([...tasks, { ...task, id: Date.now(), status: 'incomplete' }]);
+    toast.success(`Task "${task.title}" added!`);
   };
 
   const updateTaskStatus = (taskId: number, status: 'completed' | 'incomplete') => {
@@ -27,10 +30,18 @@ const App: React.FC = () => {
         task.id === taskId ? { ...task, status } : task
       )
     );
+    const updatedTask = tasks.find((task) => task.id === taskId);
+    if (status === 'completed') {
+      toast.info(`Task "${updatedTask?.title}" marked as completed!`);
+    } else {
+      toast.info(`Task "${updatedTask?.title}" marked as incomplete!`);
+    }
   };
 
   const deleteTask = (taskId: number) => {
     setTasks(tasks.filter((task) => task.id !== taskId));
+    const deletedTask = tasks.find((task) => task.id === taskId);
+    toast.error(`Task "${deletedTask?.title}" deleted!`);
   };
 
   const filteredTasks = tasks.filter(
@@ -61,6 +72,7 @@ const App: React.FC = () => {
         onDelete={(task) => deleteTask(task.id)}
         onDragEnd={onDragEnd} 
       />
+       <ToastContainer />
     </div>
   );
 };
