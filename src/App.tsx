@@ -37,6 +37,14 @@ const App: React.FC = () => {
     (task) => task.group === userGroup
   );
 
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return; // Item was not dropped in a valid droppable area
+    const reorderedTasks = Array.from(tasks);
+    const [removedTask] = reorderedTasks.splice(result.source.index, 1);
+    reorderedTasks.splice(result.destination.index, 0, removedTask);
+    setTasks(reorderedTasks);
+  };
+
   return (
     <div className='main'>
       <h1>Task Management System</h1>
@@ -51,6 +59,7 @@ const App: React.FC = () => {
         tasks={filteredTasks}
         onComplete={(task) => updateTaskStatus(task.id, 'completed')}
         onDelete={(task) => deleteTask(task.id)}
+        onDragEnd={onDragEnd} 
       />
     </div>
   );
