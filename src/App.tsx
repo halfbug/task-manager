@@ -38,10 +38,15 @@ const App: React.FC = () => {
   );
 
   return (
-    <div>
+    <div className='main'>
       <h1>Task Management System</h1>
       <TaskForm addTask={addTask} />
       <h2>Tasks</h2>
+      <select value={userGroup} onChange={(e) => setUserGroup(e.target.value)}>
+        <option value="admin">Admin</option>
+        <option value="editor">Editor</option>
+        <option value="author">Author</option>
+      </select>
       <TaskList
         tasks={filteredTasks}
         onComplete={(task) => updateTaskStatus(task.id, 'completed')}
